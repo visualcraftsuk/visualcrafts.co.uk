@@ -276,12 +276,12 @@
                       </div>
 
                       <div class="form-group">
-                          <label for="phone">Phone (Optional)</label>
-                          <input type="tel" id="phone" name="phone" placeholder="+44 123 456 7890">
+                          <label for="mj-phone">Phone (Optional)</label>
+                          <input type="tel" id="mj-phone" name="mj-phone" placeholder="+44 123 456 7890">
                       </div>
                       <div class="form-group">
-                          <label for="service">Service Interested In</label>
-                          <select id="service" name="service">
+                          <label for="mj-service">Service Interested In</label>
+                          <select id="mj-service" name="mj-service">
                               <option value="">Select a service</option>
                               <option value="branding">Branding & Graphic Design</option>
                               <option value="social-media">Social Media Creation</option>
@@ -295,7 +295,7 @@
                           <label for="mj-message">Message *</label>
                           <textarea id="mj-message" name="mj-message" rows="4" required></textarea>
                       </div>
-                      <button type="submit" class="btn btn-primary">Submit Inquiry</button>
+                      <button type="button" class="btn btn-primary" id="mailjet-submit">Submit Inquiry</button>
                   </form>
                 </div>
             </div>
@@ -375,10 +375,10 @@
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 
-    <script src="script.js"></script>    
+    <script src="script.js"></script>
     <script>
     // Mailjet email sending (demo only, do NOT use API keys in frontend for production)
-    document.getElementById('mailjet-form').addEventListener('submit', function(e) {
+    document.getElementById('mailjet-submit').addEventListener('click', function(e) {
         e.preventDefault();
         const name = document.getElementById('mj-name').value;
         const email = document.getElementById('mj-email').value;
@@ -411,8 +411,8 @@
                             }
                         ],
                         Subject: "Inquiry from " + name,
-                        TextPart: "Name: " + name + "\nEmail: " + email + "\nMessage:\n" + message,
-                        HTMLPart: "<h3>Inquiry from " + name + "</h3><p>Email: " + email + "</p><p>Message:<br>" + message + "</p>"
+                        TextPart: "Name: " + name + "\nEmail: " + email + "\nPhone: " + phone + "\nService: " + service + "\nMessage:\n" + message,
+                        HTMLPart: "<h3>Inquiry from " + name + "</h3><p>Email: " + email + "</p><p>Phone: " + phone + "</p><p>Service: " + service + "</p><p>Message:<br>" + message + "</p>"
                     }
                 ]
             })
