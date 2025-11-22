@@ -259,7 +259,7 @@
 
                 <!-- Contact Form -->
                 <div class="contact-form-wrapper">
-                    <form id="contact-form" class="contact-form">
+                    <form id="contact-form" class="contact-form" onsubmit="sendEmail(event)">
                         <div class="form-group">
                             <label for="name">Name *</label>
                             <input type="text" id="name" name="name" placeholder="Your name" required>
@@ -381,5 +381,23 @@
     <div id="toast" class="toast"></div>
 
     <script src="script.js"></script>
+    <script>
+    function sendEmail(event) {
+        event.preventDefault();
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const service = document.getElementById('service').value;
+        const message = document.getElementById('message').value;
+
+        const recipient = "visualcrafts.uk@gmail.com";
+        const subject = encodeURIComponent("Inquiry from " + name);
+        const body = encodeURIComponent(
+            `Name: ${name}\nEmail: ${email}\nPhone: ${phone}\nService: ${service}\nMessage:\n${message}`
+        );
+
+        window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
+    }
+    </script>
 </body>
 </html>
