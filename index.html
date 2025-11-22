@@ -1,30 +1,385 @@
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta charset="utf-8" />
-    <link rel="stylesheet" href="globals.css" />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="frame">
-      <div class="ellipse"></div>
-      <div class="div"></div>
-      <div class="rectangle"></div>
-      <div class="group">
-        <div class="ellipse-2"></div>
-        <div class="ellipse-3"></div>
-        <div class="ellipse-4"></div>
-        <div class="ellipse-5"></div>
-      </div>
-      <div class="group-2">
-        <div class="ellipse-6"></div>
-        <div class="ellipse-7"></div>
-        <div class="ellipse-8"></div>
-        <div class="ellipse-9"></div>
-      </div>
-      <p class="with-the-new-day">With the new day<br />comes new strength and<br />new thoughts.</p>
-      <div class="text-wrapper">#newday</div>
-      <div class="rectangle-2"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisualCrafts - Social Media Marketing & Design Agency</title>
+    <meta name="description" content="Expert branding, social media creation, motion graphics, and packaging design that brings your vision to life">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="container nav-container">
+            <button class="logo" onclick="scrollToTop()">
+                <h3>VisualCrafts</h3>
+            </button>
+
+            <!-- Desktop Navigation -->
+            <div class="nav-links">
+                <a href="#hero" class="nav-link">Home</a>
+                <a href="#services" class="nav-link">Services</a>
+                <a href="#portfolio" class="nav-link">Portfolio</a>
+                <a href="#contact" class="nav-link">Contact</a>
+                <button class="btn btn-primary" onclick="scrollToSection('contact')">Get Started</button>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <span class="hamburger"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-menu-content">
+            <a href="#hero" class="mobile-link">Home</a>
+            <a href="#services" class="mobile-link">Services</a>
+            <a href="#portfolio" class="mobile-link">Portfolio</a>
+            <a href="#contact" class="mobile-link">Contact</a>
+            <button class="btn btn-primary btn-block" onclick="scrollToSection('contact')">Get Started</button>
+        </div>
     </div>
-  </body>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+        <div class="hero-background">
+            <div class="hero-image"></div>
+            <div class="hero-overlay"></div>
+        </div>
+
+        <!-- Animated Background Elements -->
+        <div class="animated-bg">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="container hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title fade-in-up">
+                    Transform Your Brand with
+                    <span class="gradient-text">VisualCrafts</span>
+                </h1>
+
+                <p class="hero-subtitle fade-in-up delay-1">
+                    Expert branding, social media creation, motion graphics, and packaging design 
+                    that brings your vision to life
+                </p>
+
+                <div class="hero-buttons fade-in-up delay-2">
+                    <button class="btn btn-primary btn-lg" onclick="scrollToSection('contact')">
+                        Send Inquiry
+                        <svg class="icon-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-outline btn-lg" onclick="scrollToSection('portfolio')">
+                        View Our Work
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scroll Indicator -->
+            <div class="scroll-indicator">
+                <div class="mouse">
+                    <div class="wheel"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title gradient-text">Our Services</h2>
+                <p class="section-subtitle">
+                    Comprehensive design solutions tailored to elevate your brand and engage your audience
+                </p>
+            </div>
+
+            <div class="services-grid">
+                <!-- Service 1 -->
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="https://images.unsplash.com/photo-1655156871717-ccda8ae8274c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxicmFuZGluZyUyMGdyYXBoaWMlMjBkZXNpZ258ZW58MXx8fHwxNzYzODUwMjMwfDA&ixlib=rb-4.1.0&q=80&w=1080" alt="Branding & Graphic Design">
+                        <div class="service-overlay gradient-purple"></div>
+                        <div class="service-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="service-content">
+                        <h3>Branding & Graphic Design</h3>
+                        <p>Create stunning logos, posters, flyers, leaflets, banners, and hoardings that make your brand stand out</p>
+                    </div>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="https://images.unsplash.com/photo-1611926653458-09294b3142bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzb2NpYWwlMjBtZWRpYSUyMGNvbnRlbnR8ZW58MXx8fHwxNzYzODQ3NzA1fDA&ixlib=rb-4.1.0&q=80&w=1080" alt="Social Media Creation">
+                        <div class="service-overlay gradient-blue"></div>
+                        <div class="service-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                                <path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="service-content">
+                        <h3>Social Media Creation</h3>
+                        <p>Professional design, engaging content creation, and strategic scheduling to grow your online presence</p>
+                    </div>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="https://images.unsplash.com/photo-1501780392773-287d506245a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb3Rpb24lMjBncmFwaGljcyUyMHZpZGVvfGVufDF8fHx8MTc2MzgzOTM0N3ww&ixlib=rb-4.1.0&q=80&w=1080" alt="Motion Graphics">
+                        <div class="service-overlay gradient-orange"></div>
+                        <div class="service-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="service-content">
+                        <h3>Motion Graphics</h3>
+                        <p>Eye-catching animated content that captivates your audience and delivers your message dynamically</p>
+                    </div>
+                </div>
+
+                <!-- Service 4 -->
+                <div class="service-card">
+                    <div class="service-image">
+                        <img src="https://images.unsplash.com/photo-1626253934161-08cfea22e968?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9kdWN0JTIwcGFja2FnaW5nJTIwZGVzaWdufGVufDF8fHx8MTc2Mzg1MDIzMHww&ixlib=rb-4.1.0&q=80&w=1080" alt="Packaging Design">
+                        <div class="service-overlay gradient-green"></div>
+                        <div class="service-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="service-content">
+                        <h3>Packaging Design</h3>
+                        <p>Innovative packaging solutions that protect your products and enhance shelf appeal</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="portfolio-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title gradient-text">Our Portfolio</h2>
+                <p class="section-subtitle">
+                    Explore our collection of creative work and see how we've helped brands shine
+                </p>
+            </div>
+
+            <div class="portfolio-card">
+                <div class="portfolio-content">
+                    <div class="portfolio-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </div>
+                    <h3>View Our Creative Work</h3>
+                    <p>
+                        Browse through our diverse portfolio showcasing branding projects, social media campaigns, 
+                        motion graphics, and packaging designs that have delivered exceptional results for our clients.
+                    </p>
+                    <button class="btn btn-primary btn-lg" onclick="window.open('#portfolio-link', '_blank')">
+                        View Full Portfolio
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                            <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+                        </svg>
+                    </button>
+                    <p class="portfolio-note">[Portfolio link will be embedded here]</p>
+                </div>
+                <div class="decorative-blob decorative-blob-1"></div>
+                <div class="decorative-blob decorative-blob-2"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title gradient-text">Get In Touch</h2>
+                <p class="section-subtitle">
+                    Ready to transform your brand? Send us an inquiry and let's create something amazing together
+                </p>
+            </div>
+
+            <div class="contact-grid">
+                <!-- Contact Info -->
+                <div class="contact-info">
+                    <div>
+                        <h3>Let's Start a Conversation</h3>
+                        <p>
+                            We're excited to learn about your project and discuss how VisualCrafts can bring your vision to life. 
+                            Fill out the form and we'll get back to you within 24 hours.
+                        </p>
+                    </div>
+
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4>Email Us</h4>
+                            <a href="mailto:visualcrafts.uk@gmail.com">visualcrafts.uk@gmail.com</a>
+                        </div>
+                    </div>
+
+                    <div class="response-card">
+                        <div class="response-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <polyline points="22,6 12,13 2,6"/>
+                            </svg>
+                        </div>
+                        <p>We respond to all inquiries within 24 hours</p>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="contact-form-wrapper">
+                    <form id="contact-form" class="contact-form">
+                        <div class="form-group">
+                            <label for="name">Name *</label>
+                            <input type="text" id="name" name="name" placeholder="Your name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone (Optional)</label>
+                            <input type="tel" id="phone" name="phone" placeholder="+44 123 456 7890">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="service">Service Interested In</label>
+                            <select id="service" name="service">
+                                <option value="">Select a service</option>
+                                <option value="branding">Branding & Graphic Design</option>
+                                <option value="social-media">Social Media Creation</option>
+                                <option value="motion-graphics">Motion Graphics</option>
+                                <option value="packaging">Packaging Design</option>
+                                <option value="all">All Services</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Message *</label>
+                            <textarea id="message" name="message" rows="5" placeholder="Tell us about your project..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">
+                            Send Inquiry
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                        </button>
+
+                        <p class="form-note">This will open your email client to send the inquiry</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <!-- Brand -->
+                <div class="footer-col">
+                    <h3>VisualCrafts</h3>
+                    <p>Transforming brands through creative design and strategic marketing solutions.</p>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="#portfolio">Portfolio</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="footer-col">
+                    <h4>Get In Touch</h4>
+                    <a href="mailto:visualcrafts.uk@gmail.com" class="footer-email">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                        visualcrafts.uk@gmail.com
+                    </a>
+
+                    <div class="social-links">
+                        <p>Follow Us</p>
+                        <div class="social-icons">
+                            <a href="#facebook" aria-label="Facebook">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                                </svg>
+                            </a>
+                            <a href="#instagram" aria-label="Instagram">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                                </svg>
+                            </a>
+                            <a href="#linkedin" aria-label="LinkedIn">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                                    <rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>
+                                </svg>
+                            </a>
+                            <a href="#twitter" aria-label="Twitter">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Bar -->
+            <div class="footer-bottom">
+                <p>&copy; <span id="current-year"></span> VisualCrafts. All rights reserved.</p>
+                <p>Crafted with creativity and passion</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
+</body>
 </html>
