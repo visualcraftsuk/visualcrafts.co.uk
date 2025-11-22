@@ -1,54 +1,173 @@
-/* Basic page layout */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f9f9f9;
-}
-
-/* Header styles */
-header {
-  background: #222;
-  color: #fff;
-  padding: 20px 0;
-  text-align: center;
-}
-
-/* Menu styles */
-nav {
-  background: #444;
-  padding: 10px 0;
-  text-align: center;
-}
-
-nav ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: inline-block;
-}
-
-nav ul li {
-  display: inline;
-  margin: 0 15px;
-}
-
-nav ul li a {
-  color: #fff;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-nav ul li a:hover {
-  text-decoration: underline;
-}
-
-/* Footer styles */
-footer {
-  background: #222;
-  color: #fff;
-  text-align: center;
-  padding: 15px 0;
-  position: fixed;
+.frame {
+  background-color: #041241;
+  overflow: hidden;
   width: 100%;
-  bottom: 0;
+  min-width: 201px;
+  min-height: 330px;
+  position: relative;
+}
+
+.frame .ellipse {
+  position: absolute;
+  top: 228px;
+  left: -19px;
+  width: 239px;
+  height: 239px;
+  background-color: #ffffff1c;
+  border-radius: 119.5px;
+}
+
+.frame .div {
+  position: absolute;
+  top: 269px;
+  left: 17px;
+  width: 166px;
+  height: 166px;
+  background-color: #ececec;
+  border-radius: 83px;
+}
+
+.frame .rectangle {
+  top: 104px;
+  left: 48px;
+  width: 35px;
+  height: 35px;
+  background-color: #fffefe;
+  position: absolute;
+  border-radius: 21.5px;
+}
+
+.frame .group {
+  position: absolute;
+  top: 198px;
+  left: 17px;
+  width: 73px;
+  height: 42px;
+}
+
+.frame .ellipse-2 {
+  position: absolute;
+  top: 0;
+  left: 19px;
+  width: 42px;
+  height: 42px;
+  background-color: #ffffff;
+  border-radius: 20.82px;
+}
+
+.frame .ellipse-3 {
+  position: absolute;
+  top: 15px;
+  left: 48px;
+  width: 25px;
+  height: 25px;
+  background-color: #ffffff;
+  border-radius: 12.26px;
+}
+
+.frame .ellipse-4 {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  width: 19px;
+  height: 19px;
+  background-color: #ffffff;
+  border-radius: 9.7px;
+}
+
+.frame .ellipse-5 {
+  position: absolute;
+  top: 14px;
+  left: 0;
+  width: 27px;
+  height: 27px;
+  background-color: #ffffff;
+  border-radius: 13.69px;
+}
+
+.frame .group-2 {
+  position: absolute;
+  top: 172px;
+  left: 134px;
+  width: 46px;
+  height: 26px;
+}
+
+.frame .ellipse-6 {
+  position: absolute;
+  top: 0;
+  left: 12px;
+  width: 26px;
+  height: 26px;
+  background-color: #ffffff;
+  border-radius: 13.12px;
+}
+
+.frame .ellipse-7 {
+  position: absolute;
+  top: 9px;
+  left: 31px;
+  width: 15px;
+  height: 15px;
+  background-color: #ffffff;
+  border-radius: 7.73px;
+}
+
+.frame .ellipse-8 {
+  position: absolute;
+  top: 4px;
+  left: 5px;
+  width: 12px;
+  height: 12px;
+  background-color: #ffffff;
+  border-radius: 6.11px;
+}
+
+.frame .ellipse-9 {
+  position: absolute;
+  top: 9px;
+  left: 0;
+  width: 17px;
+  height: 17px;
+  background-color: #ffffff;
+  border-radius: 8.62px;
+}
+
+.frame .with-the-new-day {
+  position: absolute;
+  top: 40px;
+  left: 16px;
+  width: 168px;
+  font-family: "Inter-Regular", Helvetica;
+  font-weight: 400;
+  color: #ffffff;
+  font-size: 12px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.frame .text-wrapper {
+  position: absolute;
+  top: 21px;
+  left: 72px;
+  width: 56px;
+  font-family: "Inter-Regular", Helvetica;
+  font-weight: 400;
+  color: #ffffff;
+  font-size: 8px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.frame .rectangle-2 {
+  top: 100px;
+  left: 44px;
+  width: 113px;
+  height: 43px;
+  border: 2px solid;
+  border-color: #ffffff;
+  position: absolute;
+  border-radius: 21.5px;
 }
