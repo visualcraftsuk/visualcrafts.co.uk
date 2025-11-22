@@ -258,26 +258,44 @@
                 </div>
 
                 <!-- Contact Form -->
+
                 <div class="contact-form-wrapper">
-                    <!-- Embedded Google Form -->
+                  <!-- Embedded Google Form   
                   <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdzvE7rRSh8denug2YN6NDOaBnmgcIeeheHSxUd9xJJoj3CDg/viewform?embedded=true" width="640" height="1110" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
-                  
+                  -->
                   <!-- Mailjet Email Form -->
                   <form id="mailjet-form" style="margin-top:40px;">
-                      <h3>Send Inquiry (Mailjet)</h3>
+                      <h3>Send Inquiry</h3>
                       <div class="form-group">
                           <label for="mj-name">Name *</label>
                           <input type="text" id="mj-name" name="mj-name" required>
                       </div>
                       <div class="form-group">
                           <label for="mj-email">Email *</label>
-                          <input type="email" id="mj-email" name="mj-email" required>
+                          <input type="email" id="mj-email" name="mj-email" placeholder="your.email@example.com" required required>
+                      </div>
+
+                      <div class="form-group">
+                          <label for="phone">Phone (Optional)</label>
+                          <input type="tel" id="phone" name="phone" placeholder="+44 123 456 7890">
+                      </div>
+                      <div class="form-group">
+                          <label for="service">Service Interested In</label>
+                          <select id="service" name="service">
+                              <option value="">Select a service</option>
+                              <option value="branding">Branding & Graphic Design</option>
+                              <option value="social-media">Social Media Creation</option>
+                              <option value="motion-graphics">Motion Graphics</option>
+                              <option value="packaging">Packaging Design</option>
+                              <option value="all">All Services</option>
+                              <option value="other">Other</option>
+                          </select>
                       </div>
                       <div class="form-group">
                           <label for="mj-message">Message *</label>
                           <textarea id="mj-message" name="mj-message" rows="4" required></textarea>
                       </div>
-                      <button type="submit" class="btn btn-primary">Send via Mailjet</button>
+                      <button type="submit" class="btn btn-primary">Submit Inquiry</button>
                   </form>
                 </div>
             </div>
@@ -357,13 +375,15 @@
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 
-    <script src="script.js"></script>
+    <script src="script.js"></script>    
     <script>
     // Mailjet email sending (demo only, do NOT use API keys in frontend for production)
     document.getElementById('mailjet-form').addEventListener('submit', function(e) {
         e.preventDefault();
         const name = document.getElementById('mj-name').value;
         const email = document.getElementById('mj-email').value;
+        const phone = document.getElementById('mj-phone').value;
+        const service = document.getElementById('mj-service').value;
         const message = document.getElementById('mj-message').value;
 
         // Replace with your Mailjet API credentials
