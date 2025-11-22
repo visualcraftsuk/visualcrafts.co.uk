@@ -1,2 +1,2 @@
-# social-media-marketing
+# visual crafts site
 Social media website personal website code
