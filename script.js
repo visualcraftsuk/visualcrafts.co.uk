@@ -310,3 +310,126 @@ document.querySelectorAll('.social-icons a').forEach(icon => {
 });
 
 console.log('VisualCrafts Landing Page - Ready! 🎨');
+
+(function () {
+	// Update CSS variable --nav-offset so fragment navigation doesn't hide headings under fixed navbar
+	function updateNavOffset() {
+		var navbar = document.getElementById('navbar');
+		var offset = 0;
+		if (navbar) {
+			offset = Math.round(navbar.getBoundingClientRect().height) || navbar.offsetHeight || 0;
+		}
+		var finalOffset = offset + 12;
+		document.documentElement.style.setProperty('--nav-offset', finalOffset + 'px');
+
+		var sections = document.querySelectorAll('.portfolio-section-item');
+		sections.forEach(function (s) {
+			s.setAttribute('data-offset-applied', 'true');
+		});
+	}
+
+	// Branding carousel initializer
+	function initBrandingCarousel() {
+		var root = document.getElementById('branding-carousel');
+		if (!root || root.dataset.carouselInit) return;
+		root.dataset.carouselInit = '1';
+
+		var track = root.querySelector('.carousel-track');
+		var slides = Array.from(root.querySelectorAll('.carousel-slide'));
+		var prevBtn = root.querySelector('.carousel-btn.prev');
+		var nextBtn = root.querySelector('.carousel-btn.next');
+		var dotsWrap = root.querySelector('.carousel-dots');
+		var total = slides.length;
+		var index = 0;
+		var autoplayMs = 4000;
+		var timer = null;
+
+		// create dots
+		slides.forEach(function (_, i) {
+			var btn = document.createElement('button');
+			btn.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+			btn.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+			btn.dataset.index = i;
+			dotsWrap.appendChild(btn);
+		});
+
+		var dots = Array.from(dotsWrap.children);
+
+		function goTo(i) {
+			index = (i + total) % total;
+			track.style.transform = 'translateX(' + (-index * 100) + '%)';
+			dots.forEach(function (d, idx) {
+				d.classList.toggle('active', idx === index);
+			});
+		}
+
+		function next() { goTo(index + 1); }
+		function prev() { goTo(index - 1); }
+
+		if (nextBtn) nextBtn.addEventListener('click', function () { next(); resetTimer(); });
+		if (prevBtn) prevBtn.addEventListener('click', function () { prev(); resetTimer(); });
+
+		dots.forEach(function (d) {
+			d.addEventListener('click', function () {
+				goTo(Number(this.dataset.index));
+				resetTimer();
+			});
+		});
+
+		// keyboard navigation
+		root.addEventListener('keydown', function (e) {
+			if (e.key === 'ArrowRight') { next(); resetTimer(); }
+			if (e.key === 'ArrowLeft') { prev(); resetTimer(); }
+		});
+		root.tabIndex = 0;
+
+		function startTimer() {
+			if (autoplayMs > 0) {
+				timer = setInterval(next, autoplayMs);
+			}
+		}
+		function stopTimer() {
+			if (timer) { clearInterval(timer); timer = null; }
+		}
+		function resetTimer() { stopTimer(); startTimer(); }
+
+		root.addEventListener('mouseenter', stopTimer);
+		root.addEventListener('mouseleave', startTimer);
+
+		// init
+		goTo(0);
+		startTimer();
+	}
+
+	// Set footer year if element exists
+	function updateYear() {
+		var el = document.getElementById('current-year');
+		if (el) el.textContent = new Date().getFullYear();
+	}
+
+	// Initialize portfolio related behaviors
+	function initPortfolioFeatures() {
+		updateNavOffset();
+		// ensure accurate measurement after fonts/images load
+		setTimeout(updateNavOffset, 250);
+		initBrandingCarousel();
+	}
+
+	// Run initialization at several lifecycle points for robustness
+	document.addEventListener('DOMContentLoaded', function () {
+		updateYear();
+		initPortfolioFeatures();
+	});
+	window.addEventListener('load', function () {
+		initPortfolioFeatures();
+		setTimeout(initPortfolioFeatures, 200);
+	});
+	window.addEventListener('resize', function () {
+		updateNavOffset();
+	});
+
+	// Expose functions for debugging or manual invocation if needed
+	window.__VC = window.__VC || {};
+	window.__VC.updateNavOffset = updateNavOffset;
+	window.__VC.initBrandingCarousel = initBrandingCarousel;
+})();

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Portfolio — VisualCrafts</title>
+    <meta name="description" content="Portfolio — VisualCrafts creative work and case studies">
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- inline styles removed — anchored-section and carousel styles moved to styles.css -->
+</head>
+<body>
+    <!-- Navigation (make structure match index.html so same CSS applies) -->
+    <nav id="navbar">
+        <div class="container nav-container">
+            <button class="logo" onclick="scrollToTop()">
+                <h3>VisualCrafts</h3>
+            </button>
+
+            <div class="nav-links">
+                <a href="index.html#hero" class="nav-link">Home</a>
+                <a href="index.html#services" class="nav-link">Services</a>
+                <a href="index.html#portfolio" class="nav-link">Portfolio</a>
+                <a href="index.html#contact" class="nav-link">Contact</a>
+                <button class="btn btn-primary" onclick="location.href='index.html#contact'">Get Started</button>
+            </div>
+
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <span class="hamburger"></span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="section-header">
+            <h1 class="section-title gradient-text">Our Portfolio</h1>
+            <p class="section-subtitle">
+                Explore our collection of creative work and see how we've helped brands shine.
+            </p>
+        </div>
+
+        <!-- Branding section (replaced with carousel) -->
+        <section id="branding" class="portfolio-section-item">
+            <div class="portfolio-content">
+                <h2>Branding Case Study</h2>
+
+                <!-- Carousel -->
+                <div class="carousel" id="branding-carousel" aria-roledescription="carousel">
+                    <div class="carousel-track">
+                        <div class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=1600&auto=format&fit=crop" alt="Branding - logo and packaging">
+                        </div>
+                        <div class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?q=80&w=1600&auto=format&fit=crop" alt="Branding - marketing assets">
+                        </div>
+                        <div class="carousel-slide">
+                            <img src="https://images.unsplash.com/photo-1531123414780-f3a5b3a6e1d6?q=80&w=1600&auto=format&fit=crop" alt="Branding - final visual identity">
+                        </div>
+                    </div>
+
+                    <button class="carousel-btn prev" aria-label="Previous slide">&lsaquo;</button>
+                    <button class="carousel-btn next" aria-label="Next slide">&rsaquo;</button>
+
+                    <div class="carousel-dots" role="tablist" aria-label="Slide indicators"></div>
+                </div>
+
+                <p class="mt-12">Logo systems, packaging, and marketing assets created to give the brand a modern, consistent presence across channels.</p>
+                <p><a href="index.html#services" class="btn btn-outline">Back to Services</a></p>
+            </div>
+        </section>
+
+        <!-- Social Media section -->
+        <section id="social-media" class="portfolio-section-item">
+            <div class="portfolio-content">
+                <h2>Social Media Campaigns</h2>
+                <img src="https://images.unsplash.com/photo-1503602642458-232111445657?q=80&w=1080&auto=format&fit=crop" alt="Social media campaign">
+                <p>Content strategy, creative assets and scheduling that increased engagement and follower growth for clients.</p>
+                <p><a href="index.html#services" class="btn btn-outline">Back to Services</a></p>
+            </div>
+        </section>
+
+        <!-- Motion Graphics section -->
+        <section id="motion-graphics" class="portfolio-section-item">
+            <div class="portfolio-content">
+                <h2>Motion Reel & Animated Work</h2>
+                <img src="https://images.unsplash.com/photo-1518733057094-95b53154a617?q=80&w=1080&auto=format&fit=crop" alt="Motion reel">
+                <p>Short-form motion graphics, animated social clips and explainer videos that tell a story and capture attention.</p>
+                <p><a href="index.html#services" class="btn btn-outline">Back to Services</a></p>
+            </div>
+        </section>
+
+        <!-- Packaging section -->
+        <section id="packaging" class="portfolio-section-item">
+            <div class="portfolio-content">
+                <h2>Packaging Design</h2>
+                <img src="https://images.unsplash.com/photo-1556742031-c6961e8560b0?q=80&w=1080&auto=format&fit=crop" alt="Packaging design">
+                <p>Physical packaging concepts and dielines designed to stand out on shelf and protect the product through transit.</p>
+                <p><a href="index.html#services" class="btn btn-outline">Back to Services</a></p>
+            </div>
+        </section>
+
+        <!-- Optional additional items -->
+        <!-- ...existing code for more items if needed... -->
+
+    </main>
+
+    <!-- Footer (match index.html structure so CSS applies) -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>VisualCrafts</h3>
+                    <p>Transforming brands through creative design and strategic marketing solutions.</p>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html#services">Services</a></li>
+                        <li><a href="index.html#portfolio">Portfolio</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Get In Touch</h4>
+                    <a href="mailto:visualcrafts.uk@gmail.com" class="footer-email">visualcrafts.uk@gmail.com</a>
+                    <div class="social-links">
+                        <p>Follow Us</p>
+                        <div class="social-icons">
+                            <!-- ...existing icons... -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; <span id="current-year"></span> VisualCrafts. All rights reserved.</p>
+                <p>Crafted with creativity and passion</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="script.js"></script>
+    <!-- inline scripts moved to script.js -->
+</body>
+</html>
