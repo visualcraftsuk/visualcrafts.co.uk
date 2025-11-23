@@ -947,23 +947,35 @@ section {
     margin: 16px auto; /* center horizontally */
     border-radius: 8px;
     background: #0f1724;
+    display: block;        /* ensure block-level layout */
+    z-index: 1;            /* create stacking context for children */
+    min-height: 260px;     /* reserve space while images load */
 }
 .carousel-track {
     display: flex;
     transition: transform 1s ease;
     will-change: transform;
+    align-items: center;   /* center slides vertically inside carousel */
+    height: 100%;
 }
 .carousel-slide {
     min-width: 100%;
     box-sizing: border-box;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
 .carousel-slide img {
     display: block;
     width: 100%;
-    height: 400px;
+    max-height: 400px;     /* constrain image height, do not force container collapse */
+    height: auto;
     object-fit: cover;
 }
+
+/* Arrow buttons: ensure they overlay the carousel images only, hidden by default and above images */
 .carousel-btn {
     position: absolute;
     top: 50%;
@@ -980,7 +992,20 @@ section {
     box-shadow: 0 4px 12px rgba(0,0,0,0.25);
     font-size: 20px;
     line-height: 1;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease, transform 200ms ease;
+    z-index: 3; /* sit above slides and other page content */
 }
+
+/* reveal arrows only when hovering / focusing the carousel */
+.carousel:hover .carousel-btn,
+.carousel:focus-within .carousel-btn {
+    opacity: 1;
+    pointer-events: auto;
+}
+
 .carousel-btn.prev { left: 12px; }
 .carousel-btn.next { right: 12px; }
 
@@ -991,19 +1016,7 @@ section {
     bottom: 10px;
     display: flex;
     gap: 8px;
-}
-.carousel-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.65);
-    border: none;
-    cursor: pointer;
-    padding: 0;
-}
-.carousel-dot.active {
-    background: #ff7a59;
-    box-shadow: 0 0 0 4px rgba(255,122,89,0.12);
+    z-index: 3;
 }
 
 /* Make carousel responsive */

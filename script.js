@@ -312,124 +312,371 @@ document.querySelectorAll('.social-icons a').forEach(icon => {
 console.log('VisualCrafts Landing Page - Ready! 🎨');
 
 (function () {
-	// Update CSS variable --nav-offset so fragment navigation doesn't hide headings under fixed navbar
+	// small helpers
+	function q(sel, ctx) { return (ctx || document).querySelector(sel); }
+	function qa(sel, ctx) { return Array.from((ctx || document).querySelectorAll(sel)); }
+
+	/* ====== Nav offset & year ====== */
 	function updateNavOffset() {
-		var navbar = document.getElementById('navbar');
-		var offset = 0;
-		if (navbar) {
-			offset = Math.round(navbar.getBoundingClientRect().height) || navbar.offsetHeight || 0;
-		}
-		var finalOffset = offset + 12;
-		document.documentElement.style.setProperty('--nav-offset', finalOffset + 'px');
+		try {
+			var navbar = document.getElementById('navbar');
+			var offset = 0;
+			if (navbar) offset = Math.round(navbar.getBoundingClientRect().height) || navbar.offsetHeight || 0;
+			var finalOffset = offset + 12;
+			document.documentElement.style.setProperty('--nav-offset', finalOffset + 'px');
 
-		var sections = document.querySelectorAll('.portfolio-section-item');
-		sections.forEach(function (s) {
-			s.setAttribute('data-offset-applied', 'true');
-		});
-	}
-
-	// Branding carousel initializer
-	function initBrandingCarousel() {
-		var root = document.getElementById('branding-carousel');
-		if (!root || root.dataset.carouselInit) return;
-		root.dataset.carouselInit = '1';
-
-		var track = root.querySelector('.carousel-track');
-		var slides = Array.from(root.querySelectorAll('.carousel-slide'));
-		var prevBtn = root.querySelector('.carousel-btn.prev');
-		var nextBtn = root.querySelector('.carousel-btn.next');
-		var dotsWrap = root.querySelector('.carousel-dots');
-		var total = slides.length;
-		var index = 0;
-		var autoplayMs = 4000;
-		var timer = null;
-
-		// create dots
-		slides.forEach(function (_, i) {
-			var btn = document.createElement('button');
-			btn.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-			btn.setAttribute('aria-label', 'Go to slide ' + (i + 1));
-			btn.dataset.index = i;
-			dotsWrap.appendChild(btn);
-		});
-
-		var dots = Array.from(dotsWrap.children);
-
-		function goTo(i) {
-			index = (i + total) % total;
-			track.style.transform = 'translateX(' + (-index * 100) + '%)';
-			dots.forEach(function (d, idx) {
-				d.classList.toggle('active', idx === index);
+			qa('.portfolio-section-item').forEach(function (s) {
+				if (s) s.setAttribute('data-offset-applied', 'true');
 			});
+		} catch (err) {
+			console.error('updateNavOffset error', err);
 		}
-
-		function next() { goTo(index + 1); }
-		function prev() { goTo(index - 1); }
-
-		if (nextBtn) nextBtn.addEventListener('click', function () { next(); resetTimer(); });
-		if (prevBtn) prevBtn.addEventListener('click', function () { prev(); resetTimer(); });
-
-		dots.forEach(function (d) {
-			d.addEventListener('click', function () {
-				goTo(Number(this.dataset.index));
-				resetTimer();
-			});
-		});
-
-		// keyboard navigation
-		root.addEventListener('keydown', function (e) {
-			if (e.key === 'ArrowRight') { next(); resetTimer(); }
-			if (e.key === 'ArrowLeft') { prev(); resetTimer(); }
-		});
-		root.tabIndex = 0;
-
-		function startTimer() {
-			if (autoplayMs > 0) {
-				timer = setInterval(next, autoplayMs);
-			}
-		}
-		function stopTimer() {
-			if (timer) { clearInterval(timer); timer = null; }
-		}
-		function resetTimer() { stopTimer(); startTimer(); }
-
-		root.addEventListener('mouseenter', stopTimer);
-		root.addEventListener('mouseleave', startTimer);
-
-		// init
-		goTo(0);
-		startTimer();
 	}
-
-	// Set footer year if element exists
 	function updateYear() {
-		var el = document.getElementById('current-year');
-		if (el) el.textContent = new Date().getFullYear();
+		try {
+			var el = document.getElementById('current-year');
+			if (el) el.textContent = new Date().getFullYear();
+		} catch (err) {
+			console.error('updateYear error', err);
+		}
 	}
 
-	// Initialize portfolio related behaviors
+	/* ====== Load image list from manifest or directory (best-effort) ====== */
+	// try manifest.json and directory listing, fallback to probing common filenames
+	async function fetchImageListFromPath(dirPath) {
+		// normalize path to ensure trailing slash
+		if (!dirPath.endsWith('/')) dirPath = dirPath + '/';
+		console.debug('[branding] trying manifest at', dirPath + 'manifest.json');
+
+		// helper to clean comments from a JSON-like file
+		function cleanJsonText(text) {
+			// remove // single-line comments and /* */ block comments
+			return text.replace(/\/\/.*$/mg, '').replace(/\/\*[\s\S]*?\*\//g, '');
+		}
+
+		// 1) Try manifest.json (tolerant parse)
+		try {
+			const resp = await fetch(dirPath + 'manifest.json', { cache: 'no-store' });
+			if (resp.ok) {
+				const txt = await resp.text();
+				try {
+					const cleaned = cleanJsonText(txt).trim();
+					const json = JSON.parse(cleaned);
+					if (Array.isArray(json) && json.length) {
+						console.debug('[branding] manifest.json parsed, entries:', json);
+						return json.map(p => dirPath + p);
+					}
+				} catch (err) {
+					console.debug('[branding] manifest.json parse failed for', dirPath + 'manifest.json', err);
+				}
+			} else {
+				console.debug('[branding] manifest.json not found at', dirPath + 'manifest.json', 'status', resp.status);
+			}
+		} catch (err) {
+			console.debug('[branding] manifest fetch error for', dirPath + 'manifest.json', err);
+		}
+
+		// 2) Try directory listing HTML (if server returns index)
+		try {
+			console.debug('[branding] trying directory listing for', dirPath);
+			const resp = await fetch(dirPath, { cache: 'no-store' });
+			if (resp.ok) {
+				const text = await resp.text();
+				const doc = new DOMParser().parseFromString(text, 'text/html');
+				const anchors = Array.from(doc.querySelectorAll('a[href]'));
+				const exts = ['.png', '.jpg', '.jpeg', '.webp', '.gif'];
+				const imgs = anchors
+					.map(a => a.getAttribute('href'))
+					.filter(h => h && exts.some(e => h.toLowerCase().endsWith(e)))
+					.map(h => (h.startsWith('http') ? h : dirPath + h));
+				if (imgs.length) {
+					console.debug('[branding] directory listing found images:', imgs);
+					return imgs;
+				}
+			} else {
+				console.debug('[branding] directory listing not available for', dirPath, 'status', resp.status);
+			}
+		} catch (err) {
+			console.debug('[branding] directory listing fetch error for', dirPath, err);
+		}
+
+		// 3) Fallback: return null to let caller probe other candidates
+		return null;
+	}
+
+	async function loadBrandingImages() {
+		try {
+			// try absolute root path first and then relative variants
+			const candidates = ['/images/branding/', 'images/branding/', '/branding/', 'branding/', './images/branding/', './branding/'];
+			let list = null;
+			for (const p of candidates) {
+				console.debug('[branding] checking path candidate:', p);
+				list = await fetchImageListFromPath(p);
+				if (list && list.length) {
+					console.debug('[branding] images found in', p, list);
+					// normalize urls (leave as-is)
+					list = list.map(u => u);
+					break;
+				}
+			}
+
+			const root = document.getElementById('branding-carousel');
+			if (!root) {
+				console.debug('[branding] no #branding-carousel element found in DOM');
+				return false;
+			}
+			let track = root.querySelector('.carousel-track');
+			if (!track) {
+				track = document.createElement('div');
+				track.className = 'carousel-track';
+				root.insertBefore(track, root.firstChild);
+			}
+
+			// if we found images, populate carousel
+			if (list && list.length) {
+				track.innerHTML = '';
+				list.forEach(src => {
+					const slide = document.createElement('div');
+					slide.className = 'carousel-slide';
+					const img = document.createElement('img');
+					img.loading = 'lazy';
+					img.src = src;
+					img.alt = 'Branding image';
+					slide.appendChild(img);
+					track.appendChild(slide);
+				});
+				// cleanup any previous instance to allow re-init
+				if (root._carouselInstance && typeof root._carouselInstance.cleanup === 'function') {
+					try { root._carouselInstance.cleanup(); } catch (e) { /* ignore */ }
+					delete root._carouselInstance;
+				}
+				console.debug('[branding] carousel populated with', list.length, 'slides');
+				return true;
+			}
+
+			console.debug('[branding] no images discovered in any candidate path');
+		} catch (err) {
+			console.error('loadBrandingImages error', err);
+		}
+		return false;
+	}
+
+	/* ====== Robust Carousel initializer with cleanup ====== */
+	function initBrandingCarousel() {
+		try {
+			var root = document.getElementById('branding-carousel');
+			if (!root) return;
+			// cleanup existing
+			if (root._carouselInstance && typeof root._carouselInstance.cleanup === 'function') {
+				try { root._carouselInstance.cleanup(); } catch(e) { /* ignore */ }
+				delete root._carouselInstance;
+			}
+
+			var track = root.querySelector('.carousel-track');
+			if (!track) return;
+			var slides = qa('.carousel-slide', track);
+			if (!slides.length) return;
+
+			var prevBtn = root.querySelector('.carousel-btn.prev');
+			var nextBtn = root.querySelector('.carousel-btn.next');
+			if (prevBtn) prevBtn.type = 'button';
+			if (nextBtn) nextBtn.type = 'button';
+
+			var dotsWrap = root.querySelector('.carousel-dots');
+			if (!dotsWrap) {
+				dotsWrap = document.createElement('div');
+				dotsWrap.className = 'carousel-dots';
+				dotsWrap.setAttribute('role','tablist');
+				root.appendChild(dotsWrap);
+			}
+			dotsWrap.innerHTML = '';
+
+			var total = slides.length;
+			var index = 0;
+			var autoplayMs = 4000;
+			var timer = null;
+			var listeners = [];
+
+			// build dots
+			for (var i = 0; i < total; i++) {
+				var btn = document.createElement('button');
+				btn.type = 'button';
+				btn.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+				btn.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+				btn.dataset.index = i;
+				dotsWrap.appendChild(btn);
+			}
+			var dots = qa('.carousel-dot', dotsWrap);
+
+			function goTo(i) {
+				index = (i + total) % total;
+				if (track) track.style.transform = 'translateX(' + (-index * 100) + '%)';
+				dots.forEach(function (d, idx) { d.classList.toggle('active', idx === index); });
+			}
+			function next() { goTo(index + 1); }
+			function prev() { goTo(index - 1); }
+
+			if (nextBtn) {
+				var fnNext = function (e) { if (e) e.preventDefault(); next(); resetTimer(); };
+				nextBtn.addEventListener('click', fnNext);
+				listeners.push({el: nextBtn, ev:'click', fn: fnNext});
+			}
+			if (prevBtn) {
+				var fnPrev = function (e) { if (e) e.preventDefault(); prev(); resetTimer(); };
+				prevBtn.addEventListener('click', fnPrev);
+				listeners.push({el: prevBtn, ev:'click', fn: fnPrev});
+			}
+
+			dots.forEach(function (d) {
+				var fnDot = function (e) { if (e) e.preventDefault(); goTo(Number(this.dataset.index)); resetTimer(); };
+				d.addEventListener('click', fnDot);
+				listeners.push({el: d, ev:'click', fn: fnDot});
+			});
+
+			slides.forEach(function (slide) {
+				var img = q('img', slide);
+				if (!img) return;
+				var fnImg = function (e) {
+					if (e && e.target && e.target.closest && e.target.closest('a')) return;
+					next(); resetTimer();
+				};
+				img.addEventListener('click', fnImg);
+				listeners.push({el: img, ev:'click', fn: fnImg});
+			});
+
+			var fnKey = function (e) {
+				if (e.key === 'ArrowRight') { next(); resetTimer(); }
+				if (e.key === 'ArrowLeft') { prev(); resetTimer(); }
+			};
+			root.addEventListener('keydown', fnKey);
+			listeners.push({el: root, ev:'keydown', fn: fnKey});
+			root.tabIndex = 0;
+
+			function startTimer() { if (autoplayMs > 0) timer = setInterval(next, autoplayMs); }
+			function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
+			function resetTimer() { stopTimer(); startTimer(); }
+
+			var fnEnter = function () { stopTimer(); };
+			var fnLeave = function () { startTimer(); };
+			root.addEventListener('mouseenter', fnEnter);
+			root.addEventListener('mouseleave', fnLeave);
+			root.addEventListener('focusin', fnEnter);
+			root.addEventListener('focusout', fnLeave);
+			listeners.push({el: root, ev:'mouseenter', fn: fnEnter});
+			listeners.push({el: root, ev:'mouseleave', fn: fnLeave});
+			listeners.push({el: root, ev:'focusin', fn: fnEnter});
+			listeners.push({el: root, ev:'focusout', fn: fnLeave});
+
+			root._carouselInstance = {
+				cleanup: function () {
+					try { stopTimer(); } catch(e) {}
+					listeners.forEach(function(l) {
+						try { l.el.removeEventListener(l.ev, l.fn); } catch (e) {}
+					});
+					try { root.removeAttribute('tabindex'); } catch(e) {}
+				},
+				next: next, prev: prev, goTo: goTo
+			};
+
+			goTo(0);
+			startTimer();
+		} catch (err) {
+			console.error('initBrandingCarousel error', err);
+		}
+	}
+
+	/* ====== Mailjet form handler (guarded) ====== */
+	function initMailjetForm() {
+		try {
+			var submitBtn = document.getElementById('mailjet-submit');
+			if (!submitBtn) return;
+			submitBtn.addEventListener('click', function (e) {
+				e.preventDefault();
+				var form = document.getElementById('mailjet-form');
+				if (!form) return;
+				var name = (document.getElementById('mj-name') || {}).value || '';
+				var email = (document.getElementById('mj-email') || {}).value || '';
+				var phone = (document.getElementById('mj-phone') || {}).value || '';
+				var service = (document.getElementById('mj-service') || {}).value || '';
+				var message = (document.getElementById('mj-message') || {}).value || '';
+
+				if (!name.trim() || !email.trim() || !message.trim()) {
+					alert("Please fill in all required fields.");
+					return;
+				}
+
+				// Do not expose credentials in frontend in production.
+				const apiKey = '17bdd5025a18b80eb3ab31db1cd490f1';
+				const apiSecret = 'd8276a346133e548dae079ce04d0b0cf';
+
+				fetch('https://api.mailjet.com/v3.1/send', {
+					method: 'POST',
+					headers: {
+						'Authorization': 'Basic ' + btoa(apiKey + ':' + apiSecret),
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						Messages: [
+							{
+								From: { Email: "visualcrafts.uk@gmail.com", Name: "VisualCrafts" },
+								To: [{ Email: "visualcrafts.uk@gmail.com", Name: "VisualCrafts" }],
+								Subject: "Inquiry from " + name,
+								TextPart: "Name: " + name + "\nEmail: " + email + "\nPhone: " + phone + "\nService: " + service + "\nMessage:\n" + message,
+								HTMLPart: "<h3>Inquiry from " + name + "</h3><p>Email: " + email + "</p><p>Phone: " + phone + "</p><p>Service: " + service + "</p><p>Message:<br>" + message + "</p>"
+							}
+						]
+					})
+				})
+				.then(response => response.json())
+				.then(data => {
+					if (data && data.Messages && data.Messages[0] && data.Messages[0].Status === "success") {
+						alert("Inquiry sent successfully!");
+						form.reset();
+					} else {
+						alert("Failed to send inquiry.");
+					}
+				})
+				.catch(error => {
+					console.error('Mailjet send error', error);
+					alert("Error sending inquiry.");
+				});
+			});
+		} catch (err) {
+			console.error('initMailjetForm error', err);
+		}
+	}
+
+	/* ====== Init flow for portfolio page ====== */
 	function initPortfolioFeatures() {
 		updateNavOffset();
-		// ensure accurate measurement after fonts/images load
 		setTimeout(updateNavOffset, 250);
-		initBrandingCarousel();
+		loadBrandingImages().then(function (found) {
+			initBrandingCarousel();
+		}).catch(function(e){ console.error('loadBrandingImages promise error', e); });
 	}
 
-	// Run initialization at several lifecycle points for robustness
+	/* ====== Global init hooks ====== */
 	document.addEventListener('DOMContentLoaded', function () {
-		updateYear();
-		initPortfolioFeatures();
+		try {
+			updateYear();
+			initPortfolioFeatures();
+			initMailjetForm();
+		} catch (err) {
+			console.error('DOMContentLoaded handler error', err);
+		}
 	});
 	window.addEventListener('load', function () {
-		initPortfolioFeatures();
-		setTimeout(initPortfolioFeatures, 200);
+		try {
+			initPortfolioFeatures();
+			setTimeout(initPortfolioFeatures, 200);
+		} catch (err) { console.error('window.load handler error', err); }
 	});
-	window.addEventListener('resize', function () {
-		updateNavOffset();
-	});
+	window.addEventListener('resize', function () { try { updateNavOffset(); } catch (e) {} });
 
-	// Expose functions for debugging or manual invocation if needed
+	// expose for debugging
 	window.__VC = window.__VC || {};
 	window.__VC.updateNavOffset = updateNavOffset;
 	window.__VC.initBrandingCarousel = initBrandingCarousel;
+	window.__VC.loadBrandingImages = loadBrandingImages;
+	window.__VC.initMailjetForm = initMailjetForm;
 })();
