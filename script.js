@@ -646,13 +646,259 @@ console.log('VisualCrafts Landing Page - Ready! 🎨');
 		}
 	}
 
-	/* ====== Init flow for portfolio page ====== */
+	/* ====== Generic carousel image loader/initializer ====== */
+
+    // Hardcoded social images
+const socialImages = [
+    '/images/social/social1.jpg',
+    '/images/social/social2.jpg',
+    '/images/social/social3.jpg',
+    '/images/social/social4.jpg'
+];
+
+function loadSimpleCarousel(rootId, images) {
+    const root = document.getElementById(rootId);
+    if (!root) return;
+
+    const track = root.querySelector('.carousel-track');
+    if (!track) return;
+
+    track.innerHTML = '';
+
+    images.forEach(src => {
+        const slide = document.createElement('div');
+        slide.className = 'carousel-slide';
+        slide.innerHTML = `<img src="${src}" alt="">`;
+        track.appendChild(slide);
+    });
+
+    initCarousel(rootId);
+}
+
+loadSimpleCarousel('social-carousel', socialImages);
+/**
+	 * loadCarouselImages(rootId, candidates)
+	 * - rootId: id of carousel container (e.g. 'branding-carousel', 'social-carousel')
+	 * - candidates: array of directory path candidates to check (trailing slash optional)
+	 *
+	 * Populates .carousel-track inside the root with .carousel-slide elements when images are found.
+	 */
+	async function loadCarouselImages(rootId, candidates) {
+		try {
+			const root = document.getElementById(rootId);
+			if (!root) {
+				console.debug('[carousel] root not found:', rootId);
+				return false;
+			}
+
+			// ensure track element exists
+			let track = root.querySelector('.carousel-track');
+			if (!track) {
+				track = document.createElement('div');
+				track.className = 'carousel-track';
+				root.insertBefore(track, root.firstChild);
+			}
+
+			// try each candidate path
+			let list = null;
+			for (const p of candidates) {
+				console.debug('[carousel] checking path', p, 'for', rootId);
+				list = await fetchImageListFromPath(p);
+				if (list && list.length) {
+					console.debug('[carousel] images found for', rootId, 'in', p, list);
+					break;
+				}
+			}
+
+			if (!list || !list.length) {
+				console.debug('[carousel] no images discovered for', rootId);
+				return false;
+			}
+
+			// populate slides
+			track.innerHTML = '';
+			list.forEach(src => {
+				const slide = document.createElement('div');
+				slide.className = 'carousel-slide';
+				const img = document.createElement('img');
+				img.loading = 'lazy';
+				img.src = src;
+				img.alt = '';
+				slide.appendChild(img);
+				track.appendChild(slide);
+			});
+
+			// cleanup any previous carousel instance to allow re-init
+			if (root._carouselInstance && typeof root._carouselInstance.cleanup === 'function') {
+				try { root._carouselInstance.cleanup(); } catch (e) { /* ignore */ }
+				delete root._carouselInstance;
+			}
+
+			return true;
+		} catch (err) {
+			console.error('loadCarouselImages error for', rootId, err);
+			return false;
+		}
+	}
+
+	/**
+	 * initCarousel(rootId)
+	 * - initialises carousel behaviour for a carousel with given id
+	 * - idempotent and stores cleanup on root._carouselInstance
+	 */
+	function initCarousel(rootId) {
+		try {
+			const root = document.getElementById(rootId);
+			if (!root) return;
+
+			// cleanup existing instance
+			if (root._carouselInstance && typeof root._carouselInstance.cleanup === 'function') {
+				try { root._carouselInstance.cleanup(); } catch (e) {}
+				delete root._carouselInstance;
+			}
+
+			const track = root.querySelector('.carousel-track');
+			if (!track) return;
+			const slides = Array.from(track.querySelectorAll('.carousel-slide'));
+			if (!slides.length) return;
+
+			const prevBtn = root.querySelector('.carousel-btn.prev');
+			const nextBtn = root.querySelector('.carousel-btn.next');
+			if (prevBtn) prevBtn.type = 'button';
+			if (nextBtn) nextBtn.type = 'button';
+
+			let dotsWrap = root.querySelector('.carousel-dots');
+			if (!dotsWrap) {
+				dotsWrap = document.createElement('div');
+				dotsWrap.className = 'carousel-dots';
+				dotsWrap.setAttribute('role', 'tablist');
+				root.appendChild(dotsWrap);
+			}
+			dotsWrap.innerHTML = '';
+
+			const total = slides.length;
+			let index = 0;
+			const autoplayMs = 4000;
+			let timer = null;
+			const listeners = [];
+
+			// build dots
+			for (let i = 0; i < total; i++) {
+				const btn = document.createElement('button');
+				btn.type = 'button';
+				btn.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+				btn.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+				btn.dataset.index = i;
+				dotsWrap.appendChild(btn);
+			}
+			const dots = Array.from(dotsWrap.querySelectorAll('.carousel-dot'));
+
+			function goTo(i) {
+				index = (i + total) % total;
+				if (track) track.style.transform = 'translateX(' + (-index * 100) + '%)';
+				dots.forEach((d, idx) => d.classList.toggle('active', idx === index));
+			}
+			function next() { goTo(index + 1); }
+			function prev() { goTo(index - 1); }
+
+			// attach listeners
+			if (nextBtn) {
+				const fnNext = (e) => { if (e) e.preventDefault(); next(); resetTimer(); };
+				nextBtn.addEventListener('click', fnNext);
+				listeners.push({ el: nextBtn, ev: 'click', fn: fnNext });
+			}
+			if (prevBtn) {
+				const fnPrev = (e) => { if (e) e.preventDefault(); prev(); resetTimer(); };
+				prevBtn.addEventListener('click', fnPrev);
+				listeners.push({ el: prevBtn, ev: 'click', fn: fnPrev });
+			}
+
+			dots.forEach(d => {
+				const fnDot = function (e) { if (e) e.preventDefault(); goTo(Number(this.dataset.index)); resetTimer(); };
+				d.addEventListener('click', fnDot);
+				listeners.push({ el: d, ev: 'click', fn: fnDot });
+			});
+
+			// image click advances slide (unless inside an anchor)
+			slides.forEach(slide => {
+				const img = slide.querySelector('img');
+				if (!img) return;
+				const fnImg = (e) => {
+					if (e && e.target && e.target.closest && e.target.closest('a')) return;
+					next(); resetTimer();
+				};
+				img.addEventListener('click', fnImg);
+				listeners.push({ el: img, ev: 'click', fn: fnImg });
+			});
+
+			// keyboard navigation
+			const fnKey = (e) => {
+				if (e.key === 'ArrowRight') { next(); resetTimer(); }
+				if (e.key === 'ArrowLeft') { prev(); resetTimer(); }
+			};
+			root.addEventListener('keydown', fnKey);
+			listeners.push({ el: root, ev: 'keydown', fn: fnKey });
+			root.tabIndex = 0;
+
+			function startTimer() { if (autoplayMs > 0) timer = setInterval(next, autoplayMs); }
+			function stopTimer() { if (timer) { clearInterval(timer); timer = null; } }
+			function resetTimer() { stopTimer(); startTimer(); }
+
+			// pause on hover/focus
+			const fnEnter = () => stopTimer();
+			const fnLeave = () => startTimer();
+			root.addEventListener('mouseenter', fnEnter);
+			root.addEventListener('mouseleave', fnLeave);
+			root.addEventListener('focusin', fnEnter);
+			root.addEventListener('focusout', fnLeave);
+			listeners.push({ el: root, ev: 'mouseenter', fn: fnEnter });
+			listeners.push({ el: root, ev: 'mouseleave', fn: fnLeave });
+			listeners.push({ el: root, ev: 'focusin', fn: fnEnter });
+			listeners.push({ el: root, ev: 'focusout', fn: fnLeave });
+
+			// store cleanup
+			root._carouselInstance = {
+				cleanup() {
+					try { stopTimer(); } catch (e) {}
+					listeners.forEach(l => {
+						try { l.el.removeEventListener(l.ev, l.fn); } catch (e) {}
+					});
+					try { root.removeAttribute('tabindex'); } catch (e) {}
+				},
+				next, prev, goTo
+			};
+
+			// init
+			goTo(0);
+			startTimer();
+		} catch (err) {
+			console.error('initCarousel error for', rootId, err);
+		}
+	}
+
+	/* ====== Update init flow: load and init both branding and social carousels ====== */
+
 	function initPortfolioFeatures() {
-		updateNavOffset();
-		setTimeout(updateNavOffset, 250);
-		loadBrandingImages().then(function (found) {
-			initBrandingCarousel();
-		}).catch(function(e){ console.error('loadBrandingImages promise error', e); });
+		// existing nav offset logic
+		try { updateNavOffset(); } catch (e) {}
+		setTimeout(() => { try { updateNavOffset(); } catch (e) {} }, 250);
+
+		// load and init carousels in parallel
+		const brandingCandidates = ['/images/branding/', 'images/branding/', '/branding/', 'branding/'];
+		const socialCandidates = ['/images/social/', 'images/social/', '/social/', 'social/', '/images/branding/', 'images/branding/'];
+
+		// attempt to load branding and social images then init
+		Promise.all([
+			loadCarouselImages('branding-carousel', brandingCandidates),
+			loadCarouselImages('social-carousel', socialCandidates)
+		]).then(() => {
+			try { initCarousel('branding-carousel'); } catch (e) {}
+			try { initCarousel('social-carousel'); } catch (e) {}
+		}).catch(err => {
+			console.debug('initPortfolioFeatures: carousel load error', err);
+			try { initCarousel('branding-carousel'); } catch (e) {}
+			try { initCarousel('social-carousel'); } catch (e) {}
+		});
 	}
 
 	/* ====== Global init hooks ====== */
@@ -661,6 +907,7 @@ console.log('VisualCrafts Landing Page - Ready! 🎨');
 			updateYear();
 			initPortfolioFeatures();
 			initMailjetForm();
+            loadSimpleCarousel('social-carousel', socialImages);
 		} catch (err) {
 			console.error('DOMContentLoaded handler error', err);
 		}
@@ -680,3 +927,156 @@ console.log('VisualCrafts Landing Page - Ready! 🎨');
 	window.__VC.loadBrandingImages = loadBrandingImages;
 	window.__VC.initMailjetForm = initMailjetForm;
 })();
+
+// Generic, minimal carousel initializer to support multiple carousels on the page.
+// Finds elements with class "carousel" and uses their .carousel-track / .carousel-slide children.
+// Adds functioning prev/next buttons and keeps state per-carousel.
+(function initAllCarouselsModule() {
+	/**
+	 * Initialize a single carousel root element.
+	 * @param {HTMLElement} root
+	 */
+	function initCarousel(root) {
+		if (!root || root.dataset.carouselInit === '1') return;
+		const track = root.querySelector('.carousel-track');
+		if (!track) return;
+		const slides = Array.from(track.querySelectorAll('.carousel-slide'));
+		if (!slides.length) return;
+
+		const prevBtn = root.querySelector('.carousel-btn.prev');
+		const nextBtn = root.querySelector('.carousel-btn.next');
+
+		// ensure buttons are buttons (prevent form submit side-effects)
+		if (prevBtn) prevBtn.type = 'button';
+		if (nextBtn) nextBtn.type = 'button';
+
+		let index = 0;
+
+		function update() {
+			// translate in percent - slides expected to be full-width each.
+			track.style.transition = 'transform 400ms ease';
+			track.style.transform = 'translateX(' + (-index * 100) + '%)';
+		}
+
+		function prev() {
+			index = (index - 1 + slides.length) % slides.length;
+			update();
+		}
+		function next() {
+			index = (index + 1) % slides.length;
+			update();
+		}
+
+		// Attach handlers (guard duplicates by checking dataset flag before init)
+		if (prevBtn) prevBtn.addEventListener('click', function (e) { e && e.preventDefault(); prev(); });
+		if (nextBtn) nextBtn.addEventListener('click', function (e) { e && e.preventDefault(); next(); });
+
+		// Optional: click image to advance (non-destructive to links)
+		slides.forEach(slide => {
+			const img = slide.querySelector('img');
+			if (!img) return;
+			img.style.cursor = 'pointer';
+			img.addEventListener('click', function (e) {
+				// if user clicked a link inside the image/slide, don't intercept
+				if (e.target.closest && e.target.closest('a')) return;
+				next();
+			});
+		});
+
+		// Make keyboard accessible
+		root.tabIndex = 0;
+		root.addEventListener('keydown', function (e) {
+			if (e.key === 'ArrowRight') { next(); }
+			if (e.key === 'ArrowLeft') { prev(); }
+		});
+
+		// Mark initialized to avoid double-binding
+		root.dataset.carouselInit = '1';
+
+		// Ensure correct initial positioning
+		update();
+
+		// Recalculate on resize (keeps percent-based transform but useful if layout changes)
+		window.addEventListener('resize', function () {
+			// re-apply transform (no change to index) to ensure visual correctness
+			update();
+		});
+	}
+
+	// Initialize all carousels currently in DOM
+	function initAllCarousels() {
+		try {
+			const roots = Array.from(document.querySelectorAll('.carousel'));
+			roots.forEach(initCarousel);
+		} catch (err) {
+			console.error('initAllCarousels error', err);
+		}
+	}
+
+	// Run on DOM ready and on load (covers both dynamically injected and static HTML)
+	document.addEventListener('DOMContentLoaded', initAllCarousels);
+	window.addEventListener('load', initAllCarousels);
+
+	// expose for debugging
+	window.__initAllCarousels = initAllCarousels;
+})();
+
+/////// NEW CAROUSEL CODE STARTS 
+
+// ====== IMAGE DIRECTORY LISTS ======
+
+const brandingImages = [
+    "images/branding/branding1.png",
+    "images/branding/branding2.png",
+    "images/branding/branding3.png"
+];
+
+const socialImages = [
+    "images/social/s1.jpg",
+    "images/social/s2.jpg",
+    "images/social/s3.jpg"
+];
+
+
+// ====== UNIVERSAL CAROUSEL LOADER ======
+
+function createCarousel(carouselId, images) {
+    const carousel = document.getElementById(carouselId);
+    const track = carousel.querySelector(".track");
+    const prevBtn = carousel.querySelector(".prev");
+    const nextBtn = carousel.querySelector(".next");
+
+    // Load the images
+    images.forEach(src => {
+        const img = document.createElement("img");
+        img.src = src;
+        track.appendChild(img);
+    });
+
+    let index = 0;
+
+    function update() {
+        track.style.transform = `translateX(-${index * 100}%)`;
+    }
+
+    // Next
+    nextBtn.addEventListener("click", () => {
+        index = (index + 1) % images.length;
+        update();
+    });
+
+    // Prev
+    prevBtn.addEventListener("click", () => {
+        index = (index - 1 + images.length) % images.length;
+        update();
+    });
+
+    update();
+}
+
+
+// ====== Initialize Both Carousels ======
+createCarousel("carousel1", brandingImages);
+createCarousel("carousel2", socialImages);
+
+/////// NEW CAROUSEL CODE ENDS

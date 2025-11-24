@@ -6,8 +6,90 @@
     <title>Portfolio — VisualCrafts</title>
     <meta name="description" content="Portfolio — VisualCrafts creative work and case studies">
     <link rel="stylesheet" href="styles.css">
-
     <!-- inline styles removed — anchored-section and carousel styles moved to styles.css -->
+    <style>
+        .carousel-wrapper {
+        max-width: 800px;
+        margin-bottom: 60px;
+        }
+        .carousel {
+        position: relative;
+        background: #000; /* background shows behind letterboxed images */
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        }
+        .carousel img, .carousel video {
+        width: 100%;
+        height: auto; /* height adjusts automatically */
+        max-height: 80vh; /* optional: limit height for very tall images */
+        object-fit: contain; /* change from cover to contain */
+        background-color: #000; /* optional: shows black bars if image/video doesn't fill container */
+        object-fit: cover;
+        display: block;
+        }
+
+        .carousel video {
+        max-width: 100%;
+        max-height: 80vh;
+        }
+
+        .carousel button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(255,255,255,0.8);
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        border-radius: 50%;
+        font-size: 20px;
+        user-select: none;
+        }
+        .prev {
+        left: 15px;
+        }
+        .next {
+        right: 15px;
+        }
+        .carousel-counter {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: rgba(0,0,0,0.6);
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 14px;
+        }
+        .thumbnails {
+        display: flex;
+        overflow-x: auto;
+        margin-top: 10px;
+        gap: 5px;
+        padding-bottom: 5px;
+        }
+        .thumbnails img, .thumbnails video {
+        width: 80px;
+        height: 60px;
+        object-fit: cover;
+        border: 2px solid #ccc;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: transform 0.2s, border-color 0.2s;
+        }
+        .thumbnails img.active, .thumbnails video.active {
+        border-color: #007BFF;
+        transform: scale(1.05);
+        }
+        h2 {
+        text-align: center;
+        margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation (make structure match index.html so same CSS applies) -->
@@ -42,47 +124,69 @@
         <!-- Branding section (replaced with carousel) -->
         <section id="branding" class="portfolio-section-item">
             <div class="portfolio-content">
-                <h2>Branding Case Study</h2>
-
-                <!-- Carousel -->
-                <div class="carousel" id="branding-carousel" aria-roledescription="carousel">
-                    <div class="carousel-track"><!-- slides will be injected here by script.js --></div>
-                    <button class="carousel-btn prev" aria-label="Previous slide">&lsaquo;</button>
-                    <button class="carousel-btn next" aria-label="Next slide">&rsaquo;</button>
-
-                    <div class="carousel-dots" role="tablist" aria-label="Slide indicators"></div>
-                </div>
-
-                <p class="mt-12">Logo systems, packaging, and marketing assets created to give the brand a modern, consistent presence across channels.</p>
+                <p>Comprehensive branding solutions including logo design, brand guidelines, and visual identity systems that resonate with your target audience.</p>
                 <p><a href="index.html#services" class="btn btn-outline">Back to Services</a></p>
+                <div class="carousel-wrapper">
+                    <h2>Branding & Graphic Design</h2>
+                    <div class="carousel" id="carousel1">
+                    <div id="main1"></div>
+                    <div class="carousel-counter" id="counter1">1 / 1</div>
+                    <button class="prev" id="prevBtn1">&#10094;</button>
+                    <button class="next" id="nextBtn1">&#10095;</button>
+                    </div>
+                    <div class="thumbnails" id="thumbnails1"></div>
+                </div>
             </div>
         </section>
 
         <!-- Social Media section -->
         <section id="social-media" class="portfolio-section-item">
             <div class="portfolio-content">
-                <h2>Social Media Campaigns</h2>
-                <img src="https://images.unsplash.com/photo-1503602642458-232111445657?q=80&w=1080&auto=format&fit=crop" alt="Social media campaign">
-                <p>Content strategy, creative assets and scheduling that increased engagement and follower growth for clients.</p>
+                <p>Engaging social media graphics and content tailored to boost your online presence and connect with your audience.</p>
                 <p><a href="index.html#services" class="btn btn-outline">Back to Services</a></p>
-            </div>
+                <div class="carousel-wrapper">
+                    <h2>Social Media Creation</h2>
+                    <div class="carousel" id="carousel2">
+                    <div id="main2"></div>
+                    <div class="carousel-counter" id="counter2">1 / 1</div>
+                    <button class="prev" id="prevBtn2">&#10094;</button>
+                    <button class="next" id="nextBtn2">&#10095;</button>
+                    </div>
+                    <div class="thumbnails" id="thumbnails2"></div>
+                </div>
         </section>
 
         <!-- Motion Graphics section -->
-        <section id="motion-graphics" class="portfolio-section-item">
+        <section id="motion-graphics">
             <div class="portfolio-content">
-                <h2>Motion Reel & Animated Work</h2>
-                <img src="https://images.unsplash.com/photo-1518733057094-95b53154a617?q=80&w=1080&auto=format&fit=crop" alt="Motion reel">
                 <p>Short-form motion graphics, animated social clips and explainer videos that tell a story and capture attention.</p>
                 <p><a href="index.html#services" class="btn btn-outline">Back to Services</a></p>
+                <div class="carousel-wrapper">
+                    <h2>Motion Graphics (Videos)</h2>
+                    <div class="carousel" id="carousel3">
+                    <div id="main3"></div>
+                    <div class="carousel-counter" id="counter3">1 / 1</div>
+                    <button class="prev" id="prevBtn3">&#10094;</button>
+                    <button class="next" id="nextBtn3">&#10095;</button>
+                    </div>
+                    <div class="thumbnails" id="thumbnails3"></div>
+                </div>
             </div>
         </section>
 
         <!-- Packaging section -->
         <section id="packaging" class="portfolio-section-item">
             <div class="portfolio-content">
-                <h2>Packaging Design</h2>
-                <img src="https://images.unsplash.com/photo-1556742031-c6961e8560b0?q=80&w=1080&auto=format&fit=crop" alt="Packaging design">
+                <div class="carousel-wrapper">
+                    <h2>Packaging Design</h2>
+                    <div class="carousel" id="carousel4">
+                    <div id="main4"></div>
+                    <div class="carousel-counter" id="counter4">1 / 1</div>
+                    <button class="prev" id="prevBtn4">&#10094;</button>
+                    <button class="next" id="nextBtn4">&#10095;</button>
+                    </div>
+                    <div class="thumbnails" id="thumbnails4"></div>
+                </div>
                 <p>Physical packaging concepts and dielines designed to stand out on shelf and protect the product through transit.</p>
                 <p><a href="index.html#services" class="btn btn-outline">Back to Services</a></p>
             </div>
@@ -131,8 +235,115 @@
     </footer>
 
     <div id="toast" class="toast"></div>
+<script>
+  function createCarousel(items, mainId, counterId, prevId, nextId, thumbsId, autoSlide = false, slideInterval = 5000) {
+    let currentIndex = 0;
+    const mainContainer = document.getElementById(mainId);
+    const counter = document.getElementById(counterId);
+    const thumbsContainer = document.getElementById(thumbsId);
+    let interval;
 
-    <script src="script.js"></script>
-    <!-- inline scripts moved to script.js -->
+    function isVideo(src) {
+      return src.endsWith('.mp4') || src.endsWith('.webm') || src.endsWith('.ogg');
+    }
+
+    function renderMain() {
+      mainContainer.innerHTML = '';
+      const src = items[currentIndex];
+      let element;
+      if (isVideo(src)) {
+        element = document.createElement('video');
+        element.src = src;
+        element.controls = true;
+        element.autoplay = true;
+        element.muted = true; // auto-play requires muted for most browsers
+        element.loop = true;
+      } else {
+        element = document.createElement('img');
+        element.src = src;
+      }
+      mainContainer.appendChild(element);
+      counter.textContent = `${currentIndex + 1} / ${items.length}`;
+      Array.from(thumbsContainer.children).forEach((thumb, idx) => {
+        thumb.classList.toggle('active', idx === currentIndex);
+      });
+    }
+
+    function prev() {
+      currentIndex = (currentIndex === 0) ? items.length - 1 : currentIndex - 1;
+      renderMain();
+      resetInterval();
+    }
+
+    function next() {
+      currentIndex = (currentIndex === items.length - 1) ? 0 : currentIndex + 1;
+      renderMain();
+      resetInterval();
+    }
+
+    function resetInterval() {
+      if (autoSlide) {
+        clearInterval(interval);
+        interval = setInterval(next, slideInterval);
+      }
+    }
+
+    // Thumbnails
+    items.forEach((src, idx) => {
+      const thumb = isVideo(src) ? document.createElement('video') : document.createElement('img');
+      thumb.src = src;
+      if (isVideo(src)) thumb.muted = true; // mute video thumbnails
+      thumb.addEventListener('click', () => {
+        currentIndex = idx;
+        renderMain();
+        resetInterval();
+      });
+      thumbsContainer.appendChild(thumb);
+    });
+
+    document.getElementById(prevId).addEventListener('click', prev);
+    document.getElementById(nextId).addEventListener('click', next);
+
+    renderMain();
+
+    if (autoSlide) {
+      interval = setInterval(next, slideInterval);
+    }
+  }
+
+  const brandingImages = [
+    "images/branding/branding1.png",
+    "images/branding/branding2.png",
+    "images/branding/branding3.png",
+    "images/branding/branding4.png",
+    "images/branding/branding5.png"
+];
+
+const socialImages = [
+    "images/social/social1.png",
+    "images/social/social2.png",
+    "images/social/social3.png",
+    "images/social/social4.png",
+    "images/social/social5.png",
+    "images/social/social6.png"
+];
+const motionVideos = [
+    "videos/motion/motion1.mp4",
+    "videos/motion/motion2.mp4",
+    "videos/motion/motion3.mp4"
+];
+const packagingImages = [
+    "images/packaging/packaging1.png",
+    "images/packaging/packaging2.png"
+];
+
+
+// Initialize all carousels with auto-slide turned on
+createCarousel(brandingImages, 'main1', 'counter1', 'prevBtn1', 'nextBtn1', 'thumbnails1', true, 2000);
+createCarousel(socialImages, 'main2', 'counter2', 'prevBtn2', 'nextBtn2', 'thumbnails2', true, 2000);
+createCarousel(motionVideos, 'main3', 'counter3', 'prevBtn3', 'nextBtn3', 'thumbnails3', true, 2000);
+createCarousel(packagingImages, 'main4', 'counter4', 'prevBtn4', 'nextBtn4', 'thumbnails4', true, 2000);
+
+</script>
 </body>
 </html>
